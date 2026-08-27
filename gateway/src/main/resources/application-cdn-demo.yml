@@ -1,0 +1,22 @@
+# Optional profile: product micro-app via urls[] (Qianniu CDN-style main.css + main.js)
+# Usage:
+#   cd frontend/apps/product && pnpm build:cdn && pnpm preview
+#   java -jar gateway.jar --spring.profiles.active=cdn-demo
+spring:
+  config:
+    activate:
+      on-profile: cdn-demo
+
+mini-mall:
+  workbench:
+    modules:
+      product:
+        path: /product
+        micro-app-name: product
+        version: "0.1.0"
+        urls:
+          - http://127.0.0.1:5101/pc/css/main.css
+          - http://127.0.0.1:5101/pc/js/main.js
+        entry: ""
+        script-attributes:
+          - crossorigin=anonymous

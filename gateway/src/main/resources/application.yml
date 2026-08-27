@@ -1,0 +1,144 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: ${SPRING_APPLICATION_NAME:mini-mall-gateway}
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        fail-fast: false
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/auth/**
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/products/**
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/inventory/**
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/orders/**
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**
+        - id: marketing-service
+          uri: lb://marketing-service
+          predicates:
+            - Path=/api/marketing/**
+        - id: search-service
+          uri: lb://search-service
+          predicates:
+            - Path=/api/search/**
+        - id: user-api-docs
+          uri: lb://user-service
+          predicates:
+            - Path=/docs/user/**
+          filters:
+            - RewritePath=/docs/user/(?<segment>.*), /${segment}
+        - id: product-api-docs
+          uri: lb://product-service
+          predicates:
+            - Path=/docs/product/**
+          filters:
+            - RewritePath=/docs/product/(?<segment>.*), /${segment}
+        - id: inventory-api-docs
+          uri: lb://inventory-service
+          predicates:
+            - Path=/docs/inventory/**
+          filters:
+            - RewritePath=/docs/inventory/(?<segment>.*), /${segment}
+        - id: order-api-docs
+          uri: lb://order-service
+          predicates:
+            - Path=/docs/order/**
+          filters:
+            - RewritePath=/docs/order/(?<segment>.*), /${segment}
+        - id: payment-api-docs
+          uri: lb://payment-service
+          predicates:
+            - Path=/docs/payment/**
+          filters:
+            - RewritePath=/docs/payment/(?<segment>.*), /${segment}
+        - id: marketing-api-docs
+          uri: lb://marketing-service
+          predicates:
+            - Path=/docs/marketing/**
+          filters:
+            - RewritePath=/docs/marketing/(?<segment>.*), /${segment}
+        - id: search-api-docs
+          uri: lb://search-service
+          predicates:
+            - Path=/docs/search/**
+          filters:
+            - RewritePath=/docs/search/(?<segment>.*), /${segment}
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - name: user-service
+        url: /docs/user/v3/api-docs
+      - name: product-service
+        url: /docs/product/v3/api-docs
+      - name: inventory-service
+        url: /docs/inventory/v3/api-docs
+      - name: order-service
+        url: /docs/order/v3/api-docs
+      - name: payment-service
+        url: /docs/payment/v3/api-docs
+      - name: marketing-service
+        url: /docs/marketing/v3/api-docs
+      - name: search-service
+        url: /docs/search/v3/api-docs
+    urls-primary-name: order-service
+    disable-swagger-default-url: true
+    try-it-out-enabled: true
+
+mini-mall:
+  jwt:
+    secret: ${MINIMALL_JWT_SECRET:mini-mall-jwt-secret-key-32bytes!!}
+    expire-seconds: ${MINIMALL_JWT_EXPIRE_SECONDS:86400}
+  workbench:
+    modules:
+      product:
+        path: /product
+        micro-app-name: product
+        version: dev
+        # urls 非空时用千牛模式（css+js 直链）；dev 留空走 entry HTML
+        urls: []
+        # qiankun HTML entry. Prod: 改为 urls 列表
+        entry: //127.0.0.1:5101
+        script-attributes:
+          - crossorigin=anonymous
+      order:
+        path: /order
+        micro-app-name: order
+        version: dev
+        urls: []
+        entry: //127.0.0.1:5102
+        script-attributes:
+          - crossorigin=anonymous
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
