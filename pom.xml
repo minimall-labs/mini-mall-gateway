@@ -9,7 +9,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>mini-mall-gateway</name>
-    <description>Standalone gateway repository extracted from mini-mall</description>
+    <description>Standalone gateway repository extracted from mini-mall-services</description>
 
     <modules>
         <module>common</module>

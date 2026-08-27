@@ -14,6 +14,20 @@ spring:
         locator:
           enabled: false
       routes:
+        # Northbound: clients → Gateway → BFF
+        - id: consumer-bff
+          uri: ${CONSUMER_BFF_URI:http://127.0.0.1:8090}
+          predicates:
+            - Path=/api/consumer/**
+        - id: merchant-bff
+          uri: ${MERCHANT_BFF_URI:http://127.0.0.1:8091}
+          predicates:
+            - Path=/api/workbench/**
+        - id: open-bff
+          uri: ${OPEN_BFF_URI:http://127.0.0.1:8092}
+          predicates:
+            - Path=/open/v1/**
+        # Southbound: BFF → Gateway → domain services
         - id: user-service
           uri: lb://user-service
           predicates:
@@ -116,26 +130,6 @@ mini-mall:
   jwt:
     secret: ${MINIMALL_JWT_SECRET:mini-mall-jwt-secret-key-32bytes!!}
     expire-seconds: ${MINIMALL_JWT_EXPIRE_SECONDS:86400}
-  workbench:
-    modules:
-      product:
-        path: /product
-        micro-app-name: product
-        version: dev
-        # urls 非空时用千牛模式（css+js 直链）；dev 留空走 entry HTML
-        urls: []
-        # qiankun HTML entry. Prod: 改为 urls 列表
-        entry: //127.0.0.1:5101
-        script-attributes:
-          - crossorigin=anonymous
-      order:
-        path: /order
-        micro-app-name: order
-        version: dev
-        urls: []
-        entry: //127.0.0.1:5102
-        script-attributes:
-          - crossorigin=anonymous
 
 management:
   endpoints:

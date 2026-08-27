@@ -1,13 +1,22 @@
 # mini-mall-gateway
 
-Standalone gateway repository extracted from `mini-mall`.
+Standalone API Gateway for the mini-mall platform.
 
 ## Role
 
-- Unified entry for BFFs and internal clients
-- JWT validation and trace propagation
-- Route forwarding to domain services
-- Swagger aggregation for local development
+Northbound entry for all clients (Web / H5 / App / Merchant / Open API):
+
+```text
+Clients → CDN/WAF/LB → Gateway → BFF → Domain Services
+```
+
+Gateway responsibilities:
+
+- Route `/api/consumer/**` → Consumer BFF
+- Route `/api/workbench/**` → Merchant BFF
+- Route `/open/v1/**` → Open API BFF
+- Route `/api/auth/**`, `/api/products/**`, … → domain services (BFF southbound)
+- JWT validation, trace propagation, Swagger aggregation (local dev)
 
 ## Structure
 
@@ -27,26 +36,29 @@ mvn -q -DskipTests package
 mvn -pl gateway spring-boot:run
 ```
 
-Package once, then run a jar:
+Start BFFs before exercising northbound routes:
 
-```bash
-./scripts/start.sh jar
-```
+| BFF | Port | Repo |
+|-----|------|------|
+| Consumer | 8090 | mini-mall-consumer/server |
+| Merchant | 8091 | mini-mall-workbench/server |
+| Open | 8092 | mini-mall-open/server |
 
-Default address:
-
-- `http://127.0.0.1:8080`
+Default address: `http://127.0.0.1:8080`
 
 ## Environment
 
-This repository keeps the same runtime contract as the previous embedded gateway:
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `SERVER_PORT` | `8080` | Gateway listen port |
+| `NACOS_SERVER_ADDR` | `127.0.0.1:8848` | Service discovery for domain services |
+| `CONSUMER_BFF_URI` | `http://127.0.0.1:8090` | Consumer BFF upstream |
+| `MERCHANT_BFF_URI` | `http://127.0.0.1:8091` | Merchant BFF upstream |
+| `OPEN_BFF_URI` | `http://127.0.0.1:8092` | Open API BFF upstream |
+| `MINIMALL_JWT_SECRET` | (see `.env.example`) | JWT signing key |
+| `MINIMALL_JWT_EXPIRE_SECONDS` | `86400` | Token TTL |
 
-- `MINIMALL_JWT_SECRET`
-- `MINIMALL_JWT_EXPIRE_SECONDS`
-- `NACOS_SERVER_ADDR`
-- `SERVER_PORT`
-
-See [.env.example](.env.example) for deployment defaults.
+See [.env.example](.env.example).
 
 ## Health
 
@@ -55,21 +67,18 @@ See [.env.example](.env.example) for deployment defaults.
 
 ## Container
 
-Build and run:
-
 ```bash
 mvn -q -DskipTests package
 docker compose up --build
 ```
 
-The container image expects the jar at `gateway/target/gateway-1.0.0-SNAPSHOT.jar`.
+## BFF southbound
 
-## BFF Integration
+Each BFF calls domain services through this gateway (`MINIMALL_GATEWAY_BASE_URL=http://127.0.0.1:8080`).
 
-The three BFFs continue to point at the gateway through a single base URL:
+Merchant domain APIs from the browser use:
 
-- `mini-mall-consumer` -> `MINIMALL_GATEWAY_BASE_URL=http://127.0.0.1:8080`
-- `mini-mall-workbench` -> `MINIMALL_GATEWAY_BASE_URL=http://127.0.0.1:8080`
-- `mini-mall-open` -> `MINIMALL_GATEWAY_BASE_URL=http://127.0.0.1:8080`
-
-That keeps the BFF contract stable even if the gateway later moves behind an edge proxy or cluster service name.
+```text
+GET /api/workbench/domain/api/products/1001
+  → Gateway → Merchant BFF → Gateway → product-service
+```
