@@ -37,7 +37,11 @@ public class SwaggerUiConfig {
                       { name: 'product-service', url: '/docs/product/v3/api-docs' },
                       { name: 'inventory-service', url: '/docs/inventory/v3/api-docs' },
                       { name: 'order-service', url: '/docs/order/v3/api-docs' },
-                      { name: 'payment-service', url: '/docs/payment/v3/api-docs' }
+                      { name: 'payment-service', url: '/docs/payment/v3/api-docs' },
+                      { name: 'marketing-service', url: '/docs/marketing/v3/api-docs' },
+                      { name: 'search-service', url: '/docs/search/v3/api-docs' },
+                      { name: 'im-service', url: '/docs/im/v3/api-docs' },
+                      { name: 'id-service', url: '/docs/id/v3/api-docs' }
                     ],
                     'urls.primaryName': 'order-service',
                     dom_id: '#swagger-ui',

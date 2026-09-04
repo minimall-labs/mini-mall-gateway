@@ -87,7 +87,7 @@ docker compose up --build
 Merchant domain APIs from the browser:
 
 ```text
-GET /api/workbench/domain/api/products/1001
+GET /api/workbench/domain/api/products/100012043901
   → Gateway → Merchant BFF → Gateway → product-service
 ```
 

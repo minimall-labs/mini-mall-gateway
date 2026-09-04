@@ -35,6 +35,10 @@ spring:
           uri: lb://user-service
           predicates:
             - Path=/api/auth/**
+        - id: user-addresses
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
         - id: product-service
           uri: lb://product-service
           predicates:
@@ -59,6 +63,18 @@ spring:
           uri: lb://search-service
           predicates:
             - Path=/api/search/**
+        - id: im-service
+          uri: lb://im-service
+          predicates:
+            - Path=/api/im/**
+        - id: im-ws
+          uri: lb://im-service
+          predicates:
+            - Path=/ws/im/**
+        - id: id-service
+          uri: lb://id-service
+          predicates:
+            - Path=/api/id/**
         - id: user-api-docs
           uri: lb://user-service
           predicates:
@@ -101,6 +117,18 @@ spring:
             - Path=/docs/search/**
           filters:
             - RewritePath=/docs/search/(?<segment>.*), /${segment}
+        - id: im-api-docs
+          uri: lb://im-service
+          predicates:
+            - Path=/docs/im/**
+          filters:
+            - RewritePath=/docs/im/(?<segment>.*), /${segment}
+        - id: id-api-docs
+          uri: lb://id-service
+          predicates:
+            - Path=/docs/id/**
+          filters:
+            - RewritePath=/docs/id/(?<segment>.*), /${segment}
 
 springdoc:
   api-docs:
@@ -125,6 +153,10 @@ springdoc:
         url: /docs/marketing/v3/api-docs
       - name: search-service
         url: /docs/search/v3/api-docs
+      - name: im-service
+        url: /docs/im/v3/api-docs
+      - name: id-service
+        url: /docs/id/v3/api-docs
     urls-primary-name: order-service
     disable-swagger-default-url: true
     try-it-out-enabled: true
