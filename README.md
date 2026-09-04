@@ -1,21 +1,23 @@
 # mini-mall-gateway
 
-Standalone API Gateway for the mini-mall platform.
+MiniMall 平台 **北向 API 网关**（Spring Cloud Gateway）。
+
+**平台架构总览**：[mini-mall-services/docs/architecture.md](https://github.com/minimall-labs/mini-mall-services/blob/main/docs/architecture.md)
 
 ## Role
 
 Northbound entry for all clients (Web / H5 / App / Merchant / Open API):
 
 ```text
-Clients → CDN/WAF/LB → Gateway → BFF → Domain Services
+Clients → CDN/WAF/LB → Gateway (:8080) → BFF → Domain Services
 ```
 
 Gateway responsibilities:
 
-- Route `/api/consumer/**` → Consumer BFF
-- Route `/api/workbench/**` → Merchant BFF
-- Route `/open/v1/**` → Open API BFF
-- Route `/api/auth/**`, `/api/products/**`, … → domain services (BFF southbound)
+- Route `/api/consumer/**` → Consumer BFF (`:8090`)
+- Route `/api/workbench/**` → Merchant BFF (`:8091`)
+- Route `/open/v1/**` → Open API BFF (`:8092`)
+- Route `/api/auth/**`, `/api/products/**`, … → domain services (Merchant BFF southbound + Swagger)
 - JWT validation, trace propagation, Swagger aggregation (local dev)
 
 ## Structure
@@ -30,6 +32,8 @@ mini-mall-gateway/
 ```
 
 ## Run
+
+Prerequisites: [mini-mall-services](https://github.com/minimall-labs/mini-mall-services) (Nacos + domain services).
 
 ```bash
 mvn -q -DskipTests package
@@ -72,13 +76,24 @@ mvn -q -DskipTests package
 docker compose up --build
 ```
 
-## BFF southbound
+## BFF southbound (by BFF)
 
-Each BFF calls domain services through this gateway (`MINIMALL_GATEWAY_BASE_URL=http://127.0.0.1:8080`).
+| BFF | Southbound | Notes |
+|-----|------------|-------|
+| **Consumer** | Nacos → direct HTTP | Does **not** call Gateway for aggregation |
+| **Merchant** | Gateway → `lb://*-service` | Browser uses domain proxy below |
+| **Open** | Gateway (planned) | Domain read APIs TBD |
 
-Merchant domain APIs from the browser use:
+Merchant domain APIs from the browser:
 
 ```text
 GET /api/workbench/domain/api/products/1001
   → Gateway → Merchant BFF → Gateway → product-service
 ```
+
+## Related repos
+
+- Domain services: [mini-mall-services](https://github.com/minimall-labs/mini-mall-services)
+- Consumer BFF: [mini-mall-consumer](https://github.com/minimall-labs/mini-mall-consumer)
+- Merchant BFF: [mini-mall-workbench](https://github.com/minimall-labs/mini-mall-workbench)
+- Open BFF: [mini-mall-open](https://github.com/minimall-labs/mini-mall-open)

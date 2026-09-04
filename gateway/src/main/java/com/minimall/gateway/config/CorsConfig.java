@@ -21,10 +21,12 @@ public class CorsConfig {
         config.setAllowedOriginPatterns(List.of(
                 "http://127.0.0.1:*",
                 "http://localhost:*",
-                // Local domain proxy (frontend/docker-compose.domains.yml)
                 "http://www.mini-mall.localhost",
                 "http://mini-mall.localhost",
-                "http://*.mini-mall.localhost"
+                "http://*.mini-mall.localhost",
+                "http://merchant.mini-mall.localhost",
+                "http://h5.mini-mall.localhost",
+                "http://app.mini-mall.localhost"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));

@@ -13,6 +13,9 @@ spring:
       discovery:
         locator:
           enabled: false
+      default-filters:
+        # Gateway 与下游都可能写 X-Trace-Id / X-Request-Id，去重保留第一个
+        - DedupeResponseHeader=X-Trace-Id X-Request-Id, RETAIN_FIRST
       routes:
         # Northbound: clients → Gateway → BFF
         - id: consumer-bff
@@ -135,4 +138,9 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,metrics,prometheus,loggers
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
