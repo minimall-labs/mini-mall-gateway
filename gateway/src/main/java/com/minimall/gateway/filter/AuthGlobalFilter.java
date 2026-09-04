@@ -33,6 +33,8 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
             "/api/consumer/home",
             "/api/consumer/search/**",
             "/api/consumer/auth/**",
+            "/api/consumer/shops",
+            "/api/consumer/shops/**",
             "/api/consumer/products/*/summary",
             "/api/workbench/health",
             "/api/workbench/modules",
