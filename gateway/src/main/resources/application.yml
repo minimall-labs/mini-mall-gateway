@@ -79,6 +79,10 @@ spring:
           uri: lb://activity-service
           predicates:
             - Path=/api/activity/**
+        - id: content-service
+          uri: lb://content-service
+          predicates:
+            - Path=/api/content/**
         - id: user-api-docs
           uri: lb://user-service
           predicates:
@@ -139,6 +143,12 @@ spring:
             - Path=/docs/activity/**
           filters:
             - RewritePath=/docs/activity/(?<segment>.*), /${segment}
+        - id: content-api-docs
+          uri: lb://content-service
+          predicates:
+            - Path=/docs/content/**
+          filters:
+            - RewritePath=/docs/content/(?<segment>.*), /${segment}
 
 springdoc:
   api-docs:
@@ -169,6 +179,8 @@ springdoc:
         url: /docs/id/v3/api-docs
       - name: activity-service
         url: /docs/activity/v3/api-docs
+      - name: content-service
+        url: /docs/content/v3/api-docs
     urls-primary-name: order-service
     disable-swagger-default-url: true
     try-it-out-enabled: true

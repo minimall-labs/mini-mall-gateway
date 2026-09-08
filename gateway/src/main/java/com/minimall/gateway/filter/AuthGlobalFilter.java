@@ -50,6 +50,14 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
             "/open/v1/products/**",
             "/ws/im/**",
             "/api/id/**",
+            "/api/content/health",
+            "/api/content/feed",
+            "/api/content/notes/*/public",
+            // Public media files only: /media/{authorId}/{filename}
+            // Do NOT whitelist /media/upload — it requires JWT → X-User-Id.
+            "/api/content/media/*/*",
+            "/api/content/notes/*/events/impression",
+            "/api/content/notes/*/events/click",
             "/actuator/health",
             "/swagger-ui.html",
             "/swagger-ui/**",
