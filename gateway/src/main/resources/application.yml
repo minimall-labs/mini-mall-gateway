@@ -83,6 +83,14 @@ spring:
           uri: lb://content-service
           predicates:
             - Path=/api/content/**
+        - id: errand-service
+          uri: lb://errand-service
+          predicates:
+            - Path=/api/errand/**
+        - id: rider-errand
+          uri: lb://errand-service
+          predicates:
+            - Path=/api/rider/**
         - id: user-api-docs
           uri: lb://user-service
           predicates:
@@ -149,6 +157,12 @@ spring:
             - Path=/docs/content/**
           filters:
             - RewritePath=/docs/content/(?<segment>.*), /${segment}
+        - id: errand-api-docs
+          uri: lb://errand-service
+          predicates:
+            - Path=/docs/errand/**
+          filters:
+            - RewritePath=/docs/errand/(?<segment>.*), /${segment}
 
 springdoc:
   api-docs:
@@ -181,6 +195,8 @@ springdoc:
         url: /docs/activity/v3/api-docs
       - name: content-service
         url: /docs/content/v3/api-docs
+      - name: errand-service
+        url: /docs/errand/v3/api-docs
     urls-primary-name: order-service
     disable-swagger-default-url: true
     try-it-out-enabled: true

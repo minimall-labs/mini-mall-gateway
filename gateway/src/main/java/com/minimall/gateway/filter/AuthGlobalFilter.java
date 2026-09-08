@@ -58,6 +58,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
             "/api/content/media/*/*",
             "/api/content/notes/*/events/impression",
             "/api/content/notes/*/events/click",
+            "/api/errand/health",
             "/actuator/health",
             "/swagger-ui.html",
             "/swagger-ui/**",
